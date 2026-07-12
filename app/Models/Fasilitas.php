@@ -8,16 +8,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Fasilitas extends Model
 {
-    use HasFactory;
-
     protected $table = 'fasilitas';
     protected $primaryKey = 'id_fasilitas';
 
     protected $fillable = [
-        'nama_fasilitas',
-        'lokasi',
-        'deskripsi',
-        'status_fasilitas',
+        'nama_fasilitas', 'lokasi', 'deskripsi', 'status_fasilitas'
     ];
 
     public function pengaduan(): HasMany

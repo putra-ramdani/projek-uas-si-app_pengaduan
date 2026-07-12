@@ -3,11 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Pengaduan extends Model
+class Complaint extends Model
 {
+    // Mengarahkan model ini ke tabel 'pengaduan' asli di database
     protected $table = 'pengaduan';
+
+    // Menggunakan primary key asli tabelmu
     protected $primaryKey = 'id_pengaduan';
 
     protected $fillable = [
@@ -16,8 +18,8 @@ class Pengaduan extends Model
         'foto_kerusakan', 'prioritas', 'status_pengaduan'
     ];
 
-    // Relasi balik ke Fasilitas
-    public function fasilitas(): BelongsTo
+    // Relasi ke model Fasilitas
+    public function fasilitas()
     {
         return $this->belongsTo(Fasilitas::class, 'id_fasilitas', 'id_fasilitas');
     }
