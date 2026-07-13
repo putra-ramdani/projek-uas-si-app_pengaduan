@@ -30,7 +30,11 @@ class UserFactory extends Factory
             
             // 1. TAMBAHKAN BARIS INI:
             'username' => fake()->unique()->userName(), 
-            
+
+            // role wajib diisi (NOT NULL di migration, tidak ada default)
+            'role' => 'karyawan_gudang',
+            'status' => 'aktif',
+
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
