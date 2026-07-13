@@ -1,0 +1,1 @@
+<svg viewBox="0 0 20 20" fill="currentColor" class="w-full h-full"><path d="M3 2a1 1 0 011-1h.01A1 1 0 015 2v1.05a26.6 26.6 0 0110.646-1.4A1 1 0 0117 2.65v6.7a1 1 0 01-1.354.936A24.6 24.6 0 005 8.6V18a1 1 0 11-2 0V2z"/></svg>
