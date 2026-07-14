@@ -4,22 +4,37 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\Teknisi;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class TeknisiSeeder extends Seeder
 {
     public function run(): void
     {
-        Teknisi::insert([
+        $user = User::firstOrCreate(
             [
-                'nama_teknisi' => 'Budi Teknisi',
+                'username' => 'budi_teknisi'
+            ],
+            [
+                'name' => 'Budi Teknisi',
+                'email' => 'budi@teknisi.com',
+                'password' => Hash::make('password123'),
                 'no_telepon' => '081234567890',
+                'role' => 'teknisi',
+                'status' => 'aktif',
+            ]
+        );
+
+
+        Teknisi::firstOrCreate(
+            [
                 'email' => 'budi@teknisi.com'
             ],
             [
-                'nama_teknisi' => 'Andi Teknisi',
-                'no_telepon' => '081298765432',
-                'email' => 'andi@teknisi.com'
-            ],
-        ]);
+                'id_user' => $user->id,
+                'nama_teknisi' => 'Budi Teknisi',
+                'no_telepon' => '081234567890',
+            ]
+        );
     }
 }
