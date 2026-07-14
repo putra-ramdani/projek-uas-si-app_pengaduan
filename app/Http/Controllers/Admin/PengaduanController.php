@@ -47,7 +47,7 @@ class PengaduanController extends Controller
      */
     public function show($id)
     {
-        $pengaduan = Pengaduan::with(['fasilitas', 'pelapor', 'riwayat'])
+        $pengaduan = Pengaduan::with(['fasilitas', 'pengguna', 'perbaikan'])
             ->findOrFail($id);
 
         return view('admin.pengaduan.detail', compact('pengaduan'));

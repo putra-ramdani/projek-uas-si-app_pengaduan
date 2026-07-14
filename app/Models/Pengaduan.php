@@ -62,4 +62,5 @@ class Pengaduan extends Model
             'id_pengaduan'
         );
     }
+    
 }

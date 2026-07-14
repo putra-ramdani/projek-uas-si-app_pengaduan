@@ -48,9 +48,9 @@
             <div>
                 <p class="text-sm text-gray-400">Nama Pelapor</p>
                 <p class="font-semibold text-gray-700">
-                    {{ $pengaduan->pelapor->name ?? '-' }}
-                    @if (!empty($pengaduan->pelapor->jabatan))
-                        <span class="font-normal text-gray-500">({{ $pengaduan->pelapor->jabatan }})</span>
+                    {{ $pengaduan->pengguna->name ?? '-' }}
+                    @if (!empty($pengaduan->pengguna->jabatan))
+                        <span class="font-normal text-gray-500">({{ $pengaduan->pengguna->jabatan }})</span>
                     @endif
                 </p>
             </div>

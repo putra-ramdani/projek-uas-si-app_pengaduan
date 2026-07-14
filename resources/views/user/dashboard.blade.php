@@ -1,108 +1,90 @@
 @extends('layouts.app')
 
+@section('title', 'Dashboard User')
+
+@section('page-title', 'Dashboard User')
+@section('page-subtitle', 'Selamat datang, ' . Auth::user()->name . '!')
+
 @section('content')
-<div class="container mt-4">
-    
-    @if(session('success'))
-        <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm mb-4" role="alert">
-            <strong>Berhasil!</strong> {{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    @endif
+<div class="space-y-6">
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h2 class="fw-bold mb-1">Dashboard User</h2>
-            <p class="text-muted mb-0">Selamat datang, {{ Auth::user()->name }}!</p>
+    <div class="flex justify-end">
+        <a href="{{ route('user.pengaduan.create') }}"
+           class="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white text-sm font-semibold px-5 py-2.5 rounded-lg shadow-sm shadow-red-200 transition-colors duration-150">
+            <i class="fa-solid fa-plus"></i>
+            Buat Pengaduan
+        </a>
+    </div>
+
+    {{-- ============ STAT CARDS ============ --}}
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 text-center">
+            <p class="text-sm text-gray-400 mb-1">Total Pengaduan</p>
+            <h2 class="text-3xl font-bold text-gray-800">{{ $totalPengaduan }}</h2>
         </div>
-        <div>
-            <a href="{{ route('user.pengaduan.create') }}" class="btn btn-primary shadow-sm fw-semibold px-4">
-                + Buat Pengaduan
-            </a>
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 text-center">
+            <p class="text-sm text-gray-400 mb-1">Pengaduan Baru</p>
+            <h2 class="text-3xl font-bold text-amber-500">{{ $pengaduanBaru }}</h2>
+        </div>
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 text-center">
+            <p class="text-sm text-gray-400 mb-1">Selesai</p>
+            <h2 class="text-3xl font-bold text-green-600">{{ $pengaduanSelesai }}</h2>
         </div>
     </div>
 
-    <div class="row mb-4">
-        <div class="col-md-4 mb-3">
-            <div class="card shadow-sm border-0">
-                <div class="card-body p-4 text-center">
-                    <p class="text-muted mb-1">Total Pengaduan</p>
-                    <h2 class="fw-bold text-primary mb-0">{{ $totalPengaduan }}</h2>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4 mb-3">
-            <div class="card shadow-sm border-0">
-                <div class="card-body p-4 text-center">
-                    <p class="text-muted mb-1">Pengaduan Baru</p>
-                    <h2 class="fw-bold text-warning mb-0">{{ $pengaduanBaru }}</h2>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4 mb-3">
-            <div class="card shadow-sm border-0">
-                <div class="card-body p-4 text-center">
-                    <p class="text-muted mb-1">Selesai</p>
-                    <h2 class="fw-bold text-success mb-0">{{ $pengaduanSelesai }}</h2>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="card shadow-sm border-0">
-        <div class="card-body p-4">
-            <h5 class="fw-bold mb-4">Riwayat Pengaduan Saya</h5>
-            <div class="table-responsive">
-                <table class="table table-hover align-middle">
-                    <thead class="table-light">
-                        <tr>
-                            <th width="5%">No</th>
-                            <th width="25%">Fasilitas</th>
-                            <th width="40%">Detail Kerusakan</th>
-                            <th width="15%">Tanggal</th>
-                            <th width="10%">Aksi</th>
+    {{-- ============ RIWAYAT PENGADUAN ============ --}}
+    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+        <h5 class="font-bold text-gray-800 mb-4">Riwayat Pengaduan Saya</h5>
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead>
+                    <tr class="bg-gray-50 text-gray-500 text-left">
+                        <th class="px-4 py-3 rounded-l-lg w-[5%]">No</th>
+                        <th class="px-4 py-3 w-[22%]">Fasilitas</th>
+                        <th class="px-4 py-3 w-[33%]">Detail Kerusakan</th>
+                        <th class="px-4 py-3 w-[15%]">Tanggal</th>
+                        <th class="px-4 py-3 w-[13%] text-center">Status</th>
+                        <th class="px-4 py-3 rounded-r-lg w-[12%] text-center">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-50">
+                    @forelse($daftarPengaduan as $key => $pengaduan)
+                        <tr class="hover:bg-gray-50/60 transition-colors duration-150">
+                            <td class="px-4 py-3 text-gray-500">{{ $key + 1 }}</td>
+                            <td class="px-4 py-3 font-semibold text-gray-700">
+                                {{ $pengaduan->fasilitas->nama_fasilitas ?? 'Fasilitas Tidak Diketahui' }}
+                            </td>
+                            <td class="px-4 py-3 text-gray-500">{{ Str::limit($pengaduan->deskripsi_kerusakan, 60) }}</td>
+                            <td class="px-4 py-3 text-gray-500">{{ \Carbon\Carbon::parse($pengaduan->tanggal_pengaduan)->format('d M Y') }}</td>
+                            <td class="px-4 py-3 text-center">
+                                @if($pengaduan->status_pengaduan == 'baru')
+                                    <span class="inline-block bg-blue-50 text-blue-600 text-xs font-medium px-3 py-1 rounded-full">Baru</span>
+                                @elseif($pengaduan->status_pengaduan == 'proses')
+                                    <span class="inline-block bg-amber-50 text-amber-600 text-xs font-medium px-3 py-1 rounded-full">Proses</span>
+                                @elseif($pengaduan->status_pengaduan == 'selesai')
+                                    <span class="inline-block bg-green-50 text-green-600 text-xs font-medium px-3 py-1 rounded-full">Selesai</span>
+                                @else
+                                    <span class="inline-block bg-gray-100 text-gray-500 text-xs font-medium px-3 py-1 rounded-full">{{ $pengaduan->status_pengaduan }}</span>
+                                @endif
+                            </td>
+                            <td class="px-4 py-3 text-center">
+                                <a href="{{ route('user.pengaduan.show', $pengaduan->id_pengaduan) }}"
+                                   class="inline-block border border-red-200 text-red-600 hover:bg-red-50 text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors duration-150">
+                                    Detail
+                                </a>
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($daftarPengaduan as $key => $pengaduan)
-                            <tr>
-                                <td>{{ $key + 1 }}</td>
-                                <td>
-                                    <span class="fw-semibold">
-                                        {{ $pengaduan->fasilitas->nama_fasilitas ?? 'Fasilitas Tidak Diketahui' }}
-                                    </span>
-                                </td>
-                                <td>{{ Str::limit($pengaduan->deskripsi_kerusakan, 60) }}</td>
-                                <td>{{ \Carbon\Carbon::parse($pengaduan->tanggal_pengaduan)->format('d M Y') }}</td>
-                                <td>
-                                    @if($pengaduan->status_pengaduan == 'baru')
-                                        <span class="badge bg-primary rounded-pill px-3 py-2">Baru</span>
-                                    @elseif($pengaduan->status_pengaduan == 'proses')
-                                        <span class="badge bg-warning text-dark rounded-pill px-3 py-2">Proses</span>
-                                    @elseif($pengaduan->status_pengaduan == 'selesai')
-                                        <span class="badge bg-success rounded-pill px-3 py-2">Selesai</span>
-                                    @else
-                                        <span class="badge bg-secondary rounded-pill px-3 py-2">{{ $pengaduan->status_pengaduan }}</span>
-                                    @endif
-                                </td>
-                                <td>
-                                    <a href="{{ route('user.pengaduan.show',$pengaduan->id_pengaduan) }}"
-                                    class="btn btn-sm btn-outline-primary">
-                                        Detail
-                                    </a>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="5" class="text-center text-muted py-5">
-                                    <p class="mb-0">Belum ada riwayat pengaduan yang dibuat.</p>
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
+                    @empty
+                        <tr>
+                            <td colspan="6" class="text-center text-gray-400 py-10">
+                                Belum ada riwayat pengaduan yang dibuat.
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
         </div>
     </div>
+
 </div>
 @endsection
