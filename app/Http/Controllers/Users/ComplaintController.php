@@ -15,28 +15,19 @@ class ComplaintController extends Controller
 // Menampilkan halaman riwayat pengaduan / dashboard user
     public function index()
     {
-        $userId = Auth::id();
+        $daftarPengaduan = Pengaduan::with([
+            'fasilitas',
+            'kategoriFasilitas'
+        ])
+        ->where('id_pengguna', Auth::id())
+        ->latest('id_pengaduan')
+        ->get();
 
-        // 1. Hitung statistik yang dibutuhkan oleh dashboard.blade.php
-        $totalPengaduan   = Pengaduan::where('id_pengguna', $userId)->count();
-        $pengaduanBaru    = Pengaduan::where('id_pengguna', $userId)->where('status_pengaduan', 'baru')->count();
-        $pengaduanSelesai = Pengaduan::where('id_pengguna', $userId)->where('status_pengaduan', 'selesai')->count();
 
-        // 2. Ambil riwayat pengaduan + relasi fasilitasnya
-        $daftarPengaduan  = Pengaduan::with('fasilitas')
-                                    ->where('id_pengguna', $userId)
-                                    ->latest('id_pengaduan')
-                                    ->get();
-
-        // 3. Kirim SEMUA variabel ke view
-        return view('user.dashboard', compact(
-            'totalPengaduan', 
-            'pengaduanBaru', 
-            'pengaduanSelesai', 
+        return view('user.pengaduan.index', compact(
             'daftarPengaduan'
         ));
     }
-
     // Menampilkan FORM pengaduan baru
     public function create()
     {
@@ -80,5 +71,17 @@ class ComplaintController extends Controller
 
         // 4. Redirect kembali ke Dashboard dengan pesan sukses
         return redirect()->route('user.dashboard')->with('success', 'Pengaduan berhasil dikirim dan akan segera diproses!');
+    }
+    public function show($id)
+    {
+        $pengaduan = Pengaduan::with([
+            'fasilitas',
+            'kategoriFasilitas',
+            'perbaikan.teknisi'
+        ])
+        ->where('id_pengguna', Auth::id())
+        ->findOrFail($id);
+
+        return view('user.pengaduan.show', compact('pengaduan'));
     }
 }

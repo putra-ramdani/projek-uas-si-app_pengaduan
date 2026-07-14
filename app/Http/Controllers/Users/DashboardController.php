@@ -19,10 +19,13 @@ class DashboardController extends Controller
         $pengaduanSelesai = Pengaduan::where('id_pengguna', $userId)->where('status_pengaduan', 'selesai')->count();
 
         // Ambil riwayat pengaduan + relasi fasilitasnya
-        $daftarPengaduan  = Pengaduan::with('fasilitas')
-                                    ->where('id_pengguna', $userId)
-                                    ->latest('id_pengaduan')
-                                    ->get();
+        $daftarPengaduan = Pengaduan::with([
+            'fasilitas',
+            'kategoriFasilitas'
+        ])
+        ->where('id_pengguna', $userId)
+        ->latest('id_pengaduan')
+        ->get();
 
         return view('user.dashboard', compact(
             'totalPengaduan', 
