@@ -4,12 +4,11 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
     use AuthenticatesUsers;
-
 
     protected $redirectTo = '/home';
 
@@ -17,21 +16,26 @@ class LoginController extends Controller
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
+        $this->middleware('auth')->only('logout');
     }
 
 
-    public function username()
+    protected function authenticated($request, $user)
     {
-        return 'email';
-    }
 
-
-    protected function authenticated(Request $request, $user)
-    {
         if ($user->role == 'admin') {
-            return redirect('/data-pengaduan');
+
+            return redirect()->route('admin.dashboard');
+
+        } elseif ($user->role == 'teknisi') {
+
+            return redirect()->route('teknisi.dashboard');
+
+        } else {
+
+            return redirect()->route('user.dashboard');
+
         }
 
-        return redirect('/dashboard');
     }
 }

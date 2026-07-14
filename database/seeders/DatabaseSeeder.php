@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
             FasilitasSeeder::class,
             TeknisiSeeder::class,
             PengaduanSeeder::class,
+            PerbaikanSeeder::class,
         ]);
     }
 }

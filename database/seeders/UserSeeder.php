@@ -42,5 +42,26 @@ class UserSeeder extends Seeder
             'role' => 'ga',
             'status' => 'aktif',
         ]);
+
+        User::create([
+            'name' => 'Budi Teknisi',
+            'username' => 'budi_teknisi',
+            'email' => 'budi@teknisi.com',
+            'password' => Hash::make('password123'),
+            'no_telepon' => '081234567890',
+            'role' => 'teknisi',
+            'status' => 'aktif',
+        ]);
+
+
+        User::create([
+            'name' => 'Andi Teknisi',
+            'username' => 'andi_teknisi',
+            'email' => 'andi@teknisi.com',
+            'password' => Hash::make('password123'),
+            'no_telepon' => '081298765432',
+            'role' => 'teknisi',
+            'status' => 'aktif',
+        ]);
     }
 }
