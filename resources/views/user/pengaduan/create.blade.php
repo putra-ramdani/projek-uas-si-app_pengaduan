@@ -1,115 +1,93 @@
-@extends('layouts.app')
+@extends('layouts.app') {{-- Sesuaikan dengan nama layout indukmu --}}
+
+@section('page-title', 'Buat Pengaduan')
+@section('page-subtitle', 'Laporkan kerusakan fasilitas untuk tindak lanjut')
 
 @section('content')
-<div class="container mt-4">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card shadow-sm border-0">
-                <div class="card-header bg-white py-3 border-0">
-                    <h4 class="fw-bold mb-0">Buat Pengaduan Fasilitas</h4>
-                    <p class="text-muted small mb-0">Pilih fasilitas dan laporkan kerusakan agar segera diperbaiki.</p>
-                </div>
-                <div class="card-body p-4">
-                    
-                    <form action="{{ route('user.pengaduan.store') }}" method="POST" enctype="multipart/form-data">
-                        @csrf
+<div class="max-w-3xl">
+    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+        <div class="px-8 py-6 border-b border-gray-100">
+            <h2 class="text-lg font-bold">Formulir Pengaduan</h2>
+            <p class="text-sm text-gray-500">Silakan isi detail kerusakan fasilitas di bawah ini dengan lengkap.</p>
+        </div>
 
-                        <div class="mb-4">
-                            <label class="form-label fw-bold mb-2">Pilih Fasilitas yang Rusak</label>
-                            <div class="row g-2">
-                                @forelse($daftarFasilitas as $fasilitas)
-                                    <div class="col-md-6">
-                                        <input type="radio" class="btn-check" name="id_fasilitas" 
-                                               id="fasilitas_{{ $fasilitas->id_fasilitas }}" 
-                                               value="{{ $fasilitas->id_fasilitas }}" required>
-                                        
-                                        <label class="btn btn-outline-primary text-start w-100 p-3 shadow-sm h-100 border-2" 
-                                               for="fasilitas_{{ $fasilitas->id_fasilitas }}">
-                                            <div class="fw-bold fs-5 text-dark">{{ $fasilitas->nama_fasilitas }}</div>
-                                            <div class="text-muted small mt-1">
-                                                <i class="bi bi-geo-alt-fill text-danger"></i> {{ $fasilitas->lokasi }}
-                                            </div>
-                                        </label>
-                                    </div>
-                                @empty
-                                    <div class="col-12 text-muted small">Tidak ada data fasilitas di database.</div>
-                                @endforelse
-                            </div>
-                            @error('id_fasilitas')
-                                <div class="text-danger small mt-1">{{ $message }}</div>
-                            @enderror
-                        </div>
+        <form action="{{ route('user.pengaduan.store') }}" method="POST" enctype="multipart/form-data" class="p-8 space-y-6">
+            @csrf
 
-                        <div class="mb-4">
-                            <label class="form-label fw-bold mb-2">Kategori Fasilitas</label>
-                            <div class="row g-2">
-                                @forelse($daftarKategori as $kategori)
-                                    <div class="col-md-4">
-                                        <input type="radio" class="btn-check" name="id_kategori" 
-                                               id="kategori_{{ $kategori->id_kategori }}" 
-                                               value="{{ $kategori->id_kategori }}" required>
-                                        
-                                        <label class="btn btn-outline-secondary text-center w-100 py-3 shadow-sm border-2" 
-                                               for="kategori_{{ $kategori->id_kategori }}">
-                                            <div class="fw-semibold text-dark">{{ $kategori->nama_kategori }}</div>
-                                        </label>
-                                    </div>
-                                @empty
-                                    <div class="col-12 text-muted small">Tidak ada data kategori di database.</div>
-                                @endforelse
-                            </div>
-                            @error('id_kategori')
-                                <div class="text-danger small mt-1">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="mb-4">
-                            <label class="form-label fw-bold mb-2">Tingkat Urgensi / Prioritas</label>
-                            <div class="d-flex gap-3">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="prioritas" id="rendah" value="rendah">
-                                    <label class="form-check-label text-muted" for="rendah">Rendah</label>
+            {{-- Fasilitas --}}
+            <div>
+                <label class="block text-sm font-semibold mb-3">Pilih Fasilitas</label>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    @foreach($daftarFasilitas as $fasilitas)
+                        <label class="relative flex items-center p-4 border rounded-xl cursor-pointer hover:bg-gray-50 transition-all border-gray-200">
+                            <input type="radio" name="id_fasilitas" value="{{ $fasilitas->id_fasilitas }}" class="peer sr-only" required>
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center text-gray-500 peer-checked:bg-red-600 peer-checked:text-white transition-colors">
+                                    <i class="fa-solid fa-building"></i>
                                 </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="prioritas" id="sedang" value="sedang" checked>
-                                    <label class="form-check-label fw-semibold text-warning" for="sedang">Sedang</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="prioritas" id="tinggi" value="tinggi">
-                                    <label class="form-check-label fw-bold text-danger" for="tinggi">Tinggi *</label>
+                                <div>
+                                    <p class="font-medium text-sm">{{ $fasilitas->nama_fasilitas }}</p>
+                                    <p class="text-xs text-gray-400">{{ $fasilitas->lokasi }}</p>
                                 </div>
                             </div>
-                        </div>
-
-                        <div class="mb-4">
-                            <label for="deskripsi_kerusakan" class="form-label fw-bold">Detail Kerusakan (Tulis Deskripsi)</label>
-                            <textarea class="form-control @error('deskripsi_kerusakan') is-invalid @enderror" 
-                                      name="deskripsi_kerusakan" id="deskripsi_kerusakan" rows="4" 
-                                      placeholder="Contoh: AC mengeluarkan suara bising dan air menetes deras sejak pagi ini..." required>{{ old('deskripsi_kerusakan') }}</textarea>
-                            @error('deskripsi_kerusakan')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="mb-4">
-                            <label for="foto_kerusakan" class="form-label fw-bold">Foto Bukti Kerusakan <span class="text-muted small fw-normal">(Opsional)</span></label>
-                            <input class="form-control @error('foto_kerusakan') is-invalid @enderror" type="file" name="foto_kerusakan" id="foto_kerusakan" accept="image/*">
-                            <div class="form-text">Format: JPG, JPEG, PNG (Maks. 2MB)</div>
-                            @error('foto_kerusakan')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="d-flex justify-content-end gap-2">
-                            <a href="{{ route('user.dashboard') }}" class="btn btn-light px-4">Batal</a>
-                            <button type="submit" class="btn btn-primary px-4 fw-semibold">Kirim Laporan</button>
-                        </div>
-
-                    </form>
-
+                            <div class="absolute right-4 hidden peer-checked:block text-red-600">
+                                <i class="fa-solid fa-check-circle"></i>
+                            </div>
+                        </label>
+                    @endforeach
                 </div>
             </div>
-        </div>
+
+            {{-- Kategori & Urgensi --}}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-semibold mb-2">Kategori</label>
+                    <select name="id_kategori" class="w-full rounded-lg border-gray-200 text-sm focus:border-red-500 focus:ring-red-500" required>
+                        <option value="">Pilih Kategori...</option>
+                        @foreach($daftarKategori as $kategori)
+                            <option value="{{ $kategori->id_kategori }}">{{ $kategori->nama_kategori }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold mb-2">Tingkat Urgensi</label>
+                    <div class="flex gap-2">
+                        <input type="radio" name="prioritas" value="rendah" id="p_rendah" class="peer sr-only">
+                        <label for="p_rendah" class="flex-1 text-center py-2 text-xs font-medium border rounded-lg cursor-pointer peer-checked:bg-green-600 peer-checked:text-white transition-all">
+                            Rendah
+                        </label>
+
+                        <input type="radio" name="prioritas" value="sedang" id="p_sedang" class="peer sr-only">
+                        <label for="p_sedang" class="flex-1 text-center py-2 text-xs font-medium border rounded-lg cursor-pointer peer-checked:bg-yellow-500 peer-checked:text-white transition-all">
+                            Sedang
+                        </label>
+
+                        <input type="radio" name="prioritas" value="tinggi" id="p_tinggi" class="peer sr-only">
+                        <label for="p_tinggi" class="flex-1 text-center py-2 text-xs font-medium border rounded-lg cursor-pointer peer-checked:bg-red-600 peer-checked:text-white transition-all">
+                            Tinggi
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Deskripsi --}}
+            <div>
+                <label class="block text-sm font-semibold mb-2">Detail Kerusakan</label>
+                <textarea name="deskripsi_kerusakan" rows="4" class="w-full rounded-lg border-gray-200 text-sm focus:border-red-500 focus:ring-red-500" placeholder="Jelaskan kondisi kerusakan..." required></textarea>
+            </div>
+
+            {{-- Upload --}}
+            <div>
+                <label class="block text-sm font-semibold mb-2">Foto Bukti <span class="text-gray-400 font-normal">(Opsional)</span></label>
+                <input type="file" name="foto_kerusakan" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100">
+            </div>
+
+            {{-- Action --}}
+            <div class="pt-4 flex gap-3">
+                <a href="{{ route('user.dashboard') }}" class="px-6 py-2.5 rounded-lg border border-gray-200 text-sm font-medium hover:bg-gray-50">Batal</a>
+                <button type="submit" class="px-6 py-2.5 rounded-lg bg-red-600 text-white text-sm font-medium hover:bg-red-700 shadow-sm shadow-red-200">Kirim Laporan</button>
+            </div>
+        </form>
     </div>
 </div>
 @endsection

@@ -28,59 +28,93 @@
                 {{-- Menu --}}
                 <nav class="mt-4 flex flex-col gap-0.5 px-3">
                     @php
-                        $menu = [
-                            [
-                                'label' => 'Dashboard',
-                                'icon' => 'fa-solid fa-house',
-                                'url' => \Illuminate\Support\Facades\Route::has('user.dashboard') ? route('user.dashboard') : '#',
-                                'active' => request()->routeIs('user.dashboard'),
-                            ],
-                            [
-                                'label' => 'Pengaduan Fasilitas',
-                                'icon' => 'fa-solid fa-flag',
-                                'url' => \Illuminate\Support\Facades\Route::has('user.pengaduan.create') ? route('user.pengaduan.create') : '#',
-                                'active' => request()->routeIs('user.pengaduan.*'),
-                            ],
-                            [
-                                'label' => 'Data Pengaduan',
-                                'icon' => 'fa-solid fa-file-lines',
-                                'url' => \Illuminate\Support\Facades\Route::has('admin.pengaduan.index') ? route('admin.pengaduan.index') : '#',
-                                'active' => request()->routeIs('admin.pengaduan.index'),
-                            ],
-                            [
-                                'label' => 'Detail Pengaduan',
-                                'icon' => 'fa-solid fa-eye',
-                                'url' => '#',
-                                'active' => request()->routeIs('admin.pengaduan.show'),
-                            ],
-                            [
-                                'label' => 'Laporan Pengaduan',
-                                'icon' => 'fa-solid fa-chart-column',
-                                'url' => '#',
-                                'active' => false,
-                            ],
-                            [
-                                'label' => 'Manajemen User',
-                                'icon' => 'fa-solid fa-users',
-                                'url' => '#',
-                                'active' => false,
-                            ],
-                        ];
+                        $user = auth()->user();
                     @endphp
 
-                    @foreach ($menu as $item)
-                        <a href="{{ $item['url'] }}"
-                           class="relative flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors duration-150
-                                  {{ $item['active']
-                                        ? 'bg-red-50 text-red-600'
-                                        : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700' }}">
-                            @if ($item['active'])
+                    @if($user && $user->role === 'admin')
+                        {{-- ================= MENU KHUSUS ADMIN ================= --}}
+                        <a href="{{ route('admin.pengaduan.index') }}" 
+                           class="relative flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors duration-150 {{ request()->routeIs('admin.pengaduan.index') ? 'bg-red-50 text-red-600' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700' }}">
+                            @if(request()->routeIs('admin.pengaduan.index'))
                                 <span class="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-1 rounded-r-full bg-red-600"></span>
                             @endif
-                            <i class="{{ $item['icon'] }} w-5 text-center"></i>
-                            <span class="flex-1">{{ $item['label'] }}</span>
+                            <i class="fa-solid fa-list-check w-5 text-center"></i>
+                            <span class="flex-1">Data Pengaduan</span>
                         </a>
-                    @endforeach
+
+                        {{-- PERBAIKAN: DETAIL PENGADUAN ADMIN --}}
+                        @if(request()->routeIs('admin.pengaduan.show') && request()->route('id'))
+                            <a href="{{ route('admin.pengaduan.show', request()->route('id')) }}" 
+                               class="relative flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium bg-red-50 text-red-600 transition-colors duration-150">
+                                <span class="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-1 rounded-r-full bg-red-600"></span>
+                                <i class="fa-solid fa-eye w-5 text-center"></i>
+                                <span class="flex-1">Detail Pengaduan</span>
+                            </a>
+                        @else
+                            <div class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-gray-300 cursor-not-allowed opacity-60">
+                                <i class="fa-solid fa-eye w-5 text-center"></i>
+                                <span class="flex-1">Detail Pengaduan</span>
+                            </div>
+                        @endif
+
+                        <a href="{{ route('admin.laporan.index') }}" 
+                           class="relative flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors duration-150 {{ request()->routeIs('admin.laporan.*') ? 'bg-red-50 text-red-600' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700' }}">
+                            @if(request()->routeIs('admin.laporan.*'))
+                                <span class="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-1 rounded-r-full bg-red-600"></span>
+                            @endif
+                            <i class="fa-solid fa-chart-column w-5 text-center"></i>
+                            <span class="flex-1">Laporan Pengaduan</span>
+                        </a>
+
+                    @else
+                        {{-- ================= MENU KHUSUS USER ================= --}}
+                        <a href="{{ route('user.dashboard') }}" 
+                           class="relative flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors duration-150 {{ request()->routeIs('user.dashboard') ? 'bg-red-50 text-red-600' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700' }}">
+                            @if(request()->routeIs('user.dashboard'))
+                                <span class="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-1 rounded-r-full bg-red-600"></span>
+                            @endif
+                            <i class="fa-solid fa-house w-5 text-center"></i>
+                            <span class="flex-1">Dashboard</span>
+                        </a>
+
+                        <a href="{{ route('user.pengaduan.create') }}" 
+                           class="relative flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors duration-150 {{ request()->routeIs('user.pengaduan.create') ? 'bg-red-50 text-red-600' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700' }}">
+                            @if(request()->routeIs('user.pengaduan.create'))
+                                <span class="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-1 rounded-r-full bg-red-600"></span>
+                            @endif
+                            <i class="fa-solid fa-flag w-5 text-center"></i>
+                            <span class="flex-1">Ajukan Pengaduan</span>
+                        </a>
+
+                        <a href="{{ route('user.sw.index') }}" 
+                           class="relative flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors duration-150 {{ request()->routeIs('user.pengaduan.index') ? 'bg-red-50 text-red-600' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700' }}">
+                            @if(request()->routeIs('user.pengaduan.index'))
+                                <span class="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-1 rounded-r-full bg-red-600"></span>
+                            @endif
+                            <i class="fa-solid fa-file-lines w-5 text-center"></i>
+                            <span class="flex-1">Riwayat Pengaduan</span>
+                        </a>
+                        
+                        {{-- ================= DETAIL PENGADUAN ================= --}}
+                        @if(request()->routeIs('user.pengaduan.show'))
+                            <a href="{{ route('user.pengaduan.show', request()->route('id')) }}"
+                            class="relative flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium bg-red-50 text-red-600">
+                                <span class="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-1 rounded-r-full bg-red-600"></span>
+                                <i class="fa-solid fa-eye w-5 text-center"></i>
+                                <span class="flex-1">Detail Pengaduan</span>
+                            </a>
+                        @endif
+
+                        {{-- ================= PROFIL SAYA ================= --}}
+                        <a href="{{ route('user.profil.edit') }}"
+                        class="relative flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors duration-150 {{ request()->routeIs('user.profil.*') ? 'bg-red-50 text-red-600' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700' }}">
+                            @if(request()->routeIs('user.profil.*'))
+                                <span class="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-1 rounded-r-full bg-red-600"></span>
+                            @endif
+                            <i class="fa-solid fa-user w-5 text-center"></i>
+                            <span class="flex-1">Profil Saya</span>
+                        </a>
+                    @endif
                 </nav>
             </div>
 
@@ -89,8 +123,7 @@
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
                     <button type="submit"
-                            class="w-full flex items-center gap-3 text-left px-4 py-2.5 rounded-lg text-sm font-medium text-gray-500
-                                   hover:bg-red-50 hover:text-red-600 transition-colors duration-150">
+                            class="w-full flex items-center gap-3 text-left px-4 py-2.5 rounded-lg text-sm font-medium text-gray-500 hover:bg-red-50 hover:text-red-600 transition-colors duration-150">
                         <i class="fa-solid fa-right-from-bracket w-5 text-center"></i>
                         Keluar
                     </button>
@@ -109,8 +142,7 @@
                 </div>
 
                 <div class="flex items-center gap-5">
-                    <button type="button"
-                            class="relative w-10 h-10 rounded-full bg-gray-50 hover:bg-gray-100 flex items-center justify-center transition-colors duration-150">
+                    <button type="button" class="relative w-10 h-10 rounded-full bg-gray-50 hover:bg-gray-100 flex items-center justify-center transition-colors duration-150">
                         <i class="fa-solid fa-bell text-gray-500"></i>
                         <span class="absolute top-1.5 right-2 w-2 h-2 rounded-full bg-red-500 ring-2 ring-white"></span>
                     </button>
@@ -120,8 +152,10 @@
                             {{ substr(auth()->user()->name ?? 'A', 0, 1) }}
                         </div>
                         <div class="text-sm">
-                            <p class="font-semibold leading-tight">{{ auth()->user()->name ?? 'Admin' }}</p>
-                            <p class="text-gray-400 leading-tight">Administrator</p>
+                            <p class="font-semibold leading-tight">{{ auth()->user()->name ?? 'User' }}</p>
+                            <p class="text-gray-400 leading-tight">
+                                {{ $user && $user->role === 'admin' ? 'Administrator' : 'Karyawan Gudang' }}
+                            </p>
                         </div>
                     </div>
                 </div>
