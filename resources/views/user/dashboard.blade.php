@@ -60,7 +60,7 @@
                             <th width="25%">Fasilitas</th>
                             <th width="40%">Detail Kerusakan</th>
                             <th width="15%">Tanggal</th>
-                            <th width="15%">Status</th>
+                            <th width="10%">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -84,6 +84,12 @@
                                     @else
                                         <span class="badge bg-secondary rounded-pill px-3 py-2">{{ $pengaduan->status_pengaduan }}</span>
                                     @endif
+                                </td>
+                                <td>
+                                    <a href="{{ route('user.pengaduan.show',$pengaduan->id_pengaduan) }}"
+                                    class="btn btn-sm btn-outline-primary">
+                                        Detail
+                                    </a>
                                 </td>
                             </tr>
                         @empty
